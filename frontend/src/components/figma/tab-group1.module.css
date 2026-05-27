@@ -1,0 +1,38 @@
+.container,
+.tabGroup {
+  align-self: stretch;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+}
+.tabGroup {
+  flex-direction: column;
+  padding: var(--padding-0) 73px;
+  gap: 37px;
+  z-index: 4;
+}
+.container {
+  height: 54px;
+  background-color: var(--bg-card);
+  overflow-x: auto;
+  gap: var(--gap-28);
+}
+.tabGroupChild {
+  align-self: stretch;
+  height: var(--height-1);
+  position: relative;
+  border-top: var(--border-1);
+  box-sizing: border-box;
+}
+@media screen and (max-width: 1275px) {
+  .tabGroup {
+    padding-left: var(--padding-36);
+    padding-right: var(--padding-36);
+    box-sizing: border-box;
+  }
+}
+@media screen and (max-width: 900px) {
+  .tabGroup {
+    gap: var(--gap-18);
+  }
+}

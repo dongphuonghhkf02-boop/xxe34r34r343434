@@ -1,0 +1,33 @@
+.root {
+  cursor: pointer;
+  padding: var(--padding-16) var(--padding-20);
+  height: var(--height-51);
+  width: var(--width-284);
+  border-radius: var(--br-6);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 0;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+}
+.root[data-state="Active"] {
+  background-color: var(--bg-green);
+}
+.root[data-state="Inactive"]:hover {
+  background-color: rgba(172, 177, 79, 0.1);
+}
+.div {
+  position: relative;
+  font-size: var(--fs-16);
+  line-height: 120%;
+  font-weight: 500;
+  font-family: var(--font-golos-text);
+  text-align: center;
+  color: var(--text-black);
+}
+.root[data-state="Active"] .div {
+  color: var(--text-cream);
+}

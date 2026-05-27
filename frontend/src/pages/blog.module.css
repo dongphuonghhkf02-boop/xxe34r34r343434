@@ -1,0 +1,477 @@
+/* =====================================================================
+   /blog — стилі сторінки. Pixel-perfect відтворення від Figma:
+   1920px design width, scaled by App.tsx <ScaledShell>.
+
+   Сторінка має такі ключові зони:
+     • Hero (заголовок + лід)
+     • Filters bar (пошук + сортування) — sticky toolbar above content
+     • Category chips (Всі статті / Інокулянти / …)
+     • Featured row (1 regular + 1 wide card)
+     • Grid (3 columns of regular cards)
+   ===================================================================== */
+.page {
+  width: 100%;
+  background-color: #f9f7f2;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  color: #2c2c27;
+  font-family: "Golos Text", system-ui, sans-serif;
+}
+
+.main {
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  padding: 180px 120px 160px 120px;
+  box-sizing: border-box;
+}
+.inner {
+  width: 100%;
+  max-width: 1680px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 64px;
+}
+
+/* === Breadcrumb === */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 100%;
+  color: #93928c;
+}
+.breadcrumbLink {
+  color: #93928c;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.breadcrumbLink:hover {
+  color: #1b4332;
+}
+.breadcrumbSep {
+  color: #93928c;
+  user-select: none;
+}
+.breadcrumbCurrent {
+  color: #2c2c27;
+  font-weight: 500;
+}
+
+/* === Hero === */
+.hero {
+  align-self: stretch;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 64px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.title {
+  margin: 0;
+  max-width: 969px;
+  font-family: "Commissioner", system-ui, sans-serif;
+  font-size: 82px;
+  line-height: 110%;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  color: #2c2c27;
+  font-weight: 400;
+}
+.titleBold {
+  font-family: "Golos Text", system-ui, sans-serif;
+  font-weight: 600;
+  color: #2c2c27;
+}
+.titleAccent {
+  font-family: "Commissioner", system-ui, sans-serif;
+  font-weight: 400;
+  color: #93928c;
+}
+.lead {
+  margin: 0;
+  width: 559px;
+  max-width: 100%;
+  font-size: 22px;
+  line-height: 140%;
+  color: #2c2c27;
+  font-weight: 400;
+}
+
+/* =====================================================================
+   Filters bar — pill-styled search input + minimal sort dropdown.
+   Sits 12px below the hero, single row on desktop, wraps on tablets.
+   ===================================================================== */
+.filters {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  background: #ffffff;
+  border: 1px solid #ece9df;
+  border-radius: 16px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+/* ---- Search ---- */
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 360px;
+  min-width: 0;
+  max-width: 640px;
+  padding: 0 14px;
+  height: 48px;
+  background: #f9f7f2;
+  border: 1px solid #ece9df;
+  border-radius: 999px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+.searchBox:focus-within {
+  border-color: #1b4332;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.08);
+}
+.searchBox svg {
+  flex-shrink: 0;
+}
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  color: #2c2c27;
+  padding: 0;
+  height: 100%;
+}
+.searchInput::placeholder {
+  color: #93928c;
+}
+.searchClear {
+  flex-shrink: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #5e5e57;
+  font-size: 20px;
+  line-height: 1;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.searchClear:hover {
+  background: #ece9df;
+  color: #1b4332;
+}
+
+/* ---- Sort dropdown ---- */
+.sortBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  position: relative;
+}
+.sortLabel {
+  font-size: 14px;
+  color: #5e5e57;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.sortBtn {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1b4332;
+  background-color: #f9f7f2;
+  border: 1px solid #ece9df;
+  border-radius: 999px;
+  height: 40px;
+  min-width: 168px;
+  padding: 0 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.18s ease, background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.sortBtn:hover {
+  border-color: #c8c4b5;
+  background-color: #ffffff;
+}
+.sortBtn:focus-visible {
+  outline: none;
+  border-color: #1b4332;
+  box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.08);
+}
+.sortValue {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+}
+.sortChevron {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  color: #1b4332;
+}
+.sortMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 200px;
+  background-color: #ffffff;
+  border: 1px solid #ece9df;
+  border-radius: 12px;
+  padding: 6px;
+  z-index: 50;
+  box-shadow: 0 14px 32px rgba(15, 26, 20, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+.sortOption {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c2c27;
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+.sortOption:hover {
+  background-color: #f4f5ee;
+  color: #1b4332;
+}
+.sortOptionActive {
+  background-color: #1b4332;
+  color: #ffffff;
+}
+.sortOptionActive:hover {
+  background-color: #1b4332;
+  color: #ffffff;
+}
+
+/* =====================================================================
+   Category chips — wraps on multiple rows if needed.
+   Each chip = pill button with optional count badge inside.
+   ===================================================================== */
+.chips {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: -24px;        /* tighten distance from filters bar */
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  background: #ffffff;
+  border: 1px solid #ece9df;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c2c27;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.chip:hover {
+  border-color: #c8c4b5;
+  color: #1b4332;
+  transform: translateY(-1px);
+}
+.chipActive {
+  background: #1b4332;
+  border-color: #1b4332;
+  color: #ffffff;
+}
+.chipActive:hover {
+  background: #163729;
+  border-color: #163729;
+  color: #ffffff;
+}
+.chipCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #f9f7f2;
+  color: #5e5e57;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+.chipActive .chipCount {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+/* === Active tag pill & reset === */
+.activeTag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: #fff8d7;
+  border: 1px solid #f0e7b3;
+  border-radius: 999px;
+  font-size: 14px;
+  color: #2c2c27;
+  margin-top: -24px;
+}
+.activeTag strong {
+  color: #1b4332;
+}
+.removeTagBtn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: #5e5e57;
+  font: inherit;
+  font-size: 13px;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+.removeTagBtn:hover {
+  color: #1b4332;
+}
+.resetBtn {
+  align-self: flex-start;
+  border: 1px solid #ece9df;
+  background: #ffffff;
+  color: #1b4332;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: -24px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.resetBtn:hover {
+  background: #f4f1e7;
+  border-color: #c8c4b5;
+}
+
+/* === Featured row (1 regular + 1 wide = 544 + 24 + 828) === */
+.featuredRow {
+  align-self: stretch;
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+/* === Grid (3 columns of 544px cards) === */
+.grid {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-content: start;
+}
+
+/* === Empty / loading state === */
+.empty {
+  align-self: stretch;
+  padding: 80px 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px dashed #ece9df;
+  border-radius: 20px;
+  color: #5e5e57;
+  font-size: 18px;
+}
+
+/* === Responsive === */
+@media (max-width: 1700px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  }
+  .featuredRow > * {
+    flex: 1 1 360px;
+  }
+}
+@media (max-width: 1100px) {
+  .main { padding: 140px 24px 80px; }
+  .inner { gap: 48px; }
+  .title { font-size: 56px; }
+  .lead { font-size: 18px; }
+  .hero { gap: 24px; }
+  .filters {
+    padding: 12px 16px;
+    border-radius: 12px;
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .title { font-size: 40px; }
+  .lead { font-size: 16px; }
+  .inner { gap: 36px; }
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+  }
+  .searchBox {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    height: 44px;
+  }
+  .sortBox { justify-content: flex-start; gap: 8px; }
+  .sortBtn { height: 36px; font-size: 13px; min-width: 148px; }
+  .chips { gap: 8px; }
+  .chip { height: 34px; padding: 0 12px; font-size: 13px; }
+  .featuredRow { gap: 16px; }
+  .featuredRow > * { flex: 1 1 100%; }
+  .grid { grid-template-columns: 1fr; gap: 16px; }
+}
+
+@media (max-width: 480px) {
+  .title { font-size: 32px; line-height: 1.1; }
+  .main { padding: 90px 16px 60px; }
+}

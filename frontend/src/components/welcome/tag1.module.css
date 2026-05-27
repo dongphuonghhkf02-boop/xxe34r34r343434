@@ -1,0 +1,30 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--br-6, 6px);
+  padding: 6px 10px;
+  gap: 6px;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 400;
+  color: #1b4332;
+  font-family: var(--font-golos-text);
+  white-space: nowrap;
+}
+
+/* Ghost — без подложки (Хіт продажу) */
+.ghost {
+  background-color: transparent;
+  padding: 6px 0;
+}
+
+/* Filled — пилюля #F7FAE8 (Захист рослин) */
+.filled {
+  background-color: #f7fae8;
+}
+
+.div {
+  position: relative;
+  letter-spacing: 0;
+}

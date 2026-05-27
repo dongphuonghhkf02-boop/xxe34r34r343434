@@ -1,0 +1,309 @@
+.chemicalElementsParent,
+.frameWrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 100%;
+}
+.frameWrapper {
+  align-self: stretch;
+  padding: var(--padding-0) var(--padding-20) 31.2px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  text-align: left;
+  font-size: var(--fs-48);
+  color: var(--brand-accent-secondary-default);
+  font-family: var(--font-golos-text);
+}
+.chemicalElementsParent {
+  width: var(--width-1680);
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--gap-20);
+}
+.chemicalElements,
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.chemicalElements {
+  width: 388px;
+  padding: 368px var(--padding-0) var(--padding-0);
+  box-sizing: border-box;
+  max-width: 100%;
+  text-align: left;
+  font-size: var(--fs-48);
+  color: var(--brand-accent-secondary-default);
+  font-family: var(--font-golos-text);
+}
+.text {
+  align-self: stretch;
+  gap: var(--gap-24);
+}
+.div,
+.h1 {
+  position: relative;
+}
+.h1 {
+  margin: 0;
+  align-self: stretch;
+  font-size: 48px;
+  letter-spacing: -0.5px;
+  line-height: 100%;
+  font-weight: 600;
+  font-family: var(--font-golos-text);
+  color: var(--brand-accent-secondary-default);
+}
+.div {
+  width: 358px;
+  font-size: 18px;
+  line-height: 140%;
+  font-weight: 400;
+  color: var(--text-black);
+  font-family: var(--font-golos-text);
+  display: inline-block;
+}
+.div b,
+.div2 b {
+  font-weight: 700;
+  color: var(--text-black);
+}
+.imageWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--padding-0) var(--padding-24) var(--padding-0) var(--padding-0);
+  box-sizing: border-box;
+  min-width: 577px;
+  max-width: 100%;
+}
+
+/* ============ before/after comparison area ============
+   Прості 2 шари в один контейнер — від краю до краю:
+   - Layer 1 (good): здорова кобка — БАЗА, завжди під низом
+   - Layer 2 (bad):  AI-згенерована парна копія тієї ж кобки в хворому стані,
+                     клипається від правого краю clip-path-ом на ВСЮ ширину контейнера
+   - Слайдер ходить від 0 до 100 (повна ширина)
+*/
+.image {
+  align-self: stretch;
+  height: 1013.8px;
+  position: relative;
+  background-color: var(--bg-card);
+  overflow: hidden;
+  flex-shrink: 0;
+  max-width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  cursor: ew-resize;
+}
+.imageDragging {
+  cursor: grabbing;
+}
+
+.layerGood,
+.layerBad {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  pointer-events: none;
+  will-change: clip-path;
+}
+
+/* Здорова — БАЗА, завжди видна під низом */
+.layerGood {
+  background-image: url(/corn-final-good@2x.webp);
+}
+
+/* Хвора — AI-інверсія тієї самої композиції (та сама кобка, той самий
+   ракурс, та сама геометрія) — ідеальний pixel-aligned wipe */
+.layerBad {
+  background-image: url(/corn-final-bad@2x.webp);
+  transition: clip-path 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Під час drag-у — без переходу, миттєвий response */
+.noTransition {
+  transition: none !important;
+}
+
+/* ============ divider + handle ============ */
+.compareSlider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 138.24px;
+  margin-left: -69.12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+  isolation: isolate;
+  transition: left 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.line {
+  width: 13.8px;
+  flex: 1;
+  border-radius: 6.9px;
+  background-color: var(--bg-card);
+  /* lite shadow, щоб лінія читалась поверх обох знімків */
+  box-shadow: 0 0 24px rgba(28, 60, 39, 0.18);
+}
+.handle {
+  width: 138.24px;
+  height: 138.24px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: calc(50% - 69.12px);
+  left: calc(50% - 69.12px);
+  border-radius: 50%;
+  border: 0;
+  background-color: var(--bg-card);
+  box-shadow: 0 12px 32px rgba(28, 60, 39, 0.22),
+              0 4px 12px rgba(28, 60, 39, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ew-resize;
+  pointer-events: auto;
+  touch-action: none;
+  z-index: 1;
+  transition: transform 160ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 160ms ease;
+  outline: none;
+  font-family: inherit;
+}
+.handle:hover {
+  transform: scale(1.06);
+  box-shadow: 0 16px 40px rgba(28, 60, 39, 0.28),
+              0 6px 16px rgba(28, 60, 39, 0.16);
+}
+.handle:focus-visible {
+  box-shadow: 0 0 0 4px rgba(179, 210, 23, 0.55),
+              0 12px 32px rgba(28, 60, 39, 0.22);
+}
+.imageDragging .handle {
+  cursor: grabbing;
+  transform: scale(1.04);
+  box-shadow: 0 18px 44px rgba(28, 60, 39, 0.3),
+              0 8px 18px rgba(28, 60, 39, 0.18);
+}
+.icons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0;
+  pointer-events: none;
+}
+
+.bioPreparationsWrapper {
+  width: var(--width-364);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 370px var(--padding-0) var(--padding-0);
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.div2 {
+  position: relative;
+  font-size: 18px;
+  line-height: 140%;
+  font-weight: 400;
+  color: var(--text-black);
+  font-family: var(--font-golos-text);
+}
+
+@media screen and (max-width: 925px) {
+  .chemicalElements {
+    padding-top: 239px;
+    box-sizing: border-box;
+  }
+  .h1 {
+    font-size: 38px;
+    line-height: 38px;
+  }
+  .imageWrapper {
+    min-width: 100%;
+  }
+  .bioPreparationsWrapper {
+    padding-top: 240px;
+    box-sizing: border-box;
+  }
+}
+@media screen and (max-width: 450px) {
+  .h1 {
+    font-size: var(--fs-29);
+    line-height: 29px;
+  }
+  .image {
+    min-height: 1013.8px;
+  }
+  .icons {
+    flex-wrap: wrap;
+  }
+}
+
+/* ───── Mobile (≤ 768px) — stacked layout ───── */
+@media screen and (max-width: 768px) {
+  .frameWrapper {
+    padding: 56px 20px 32px;
+  }
+  .chemicalElementsParent {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 28px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .chemicalElements,
+  .bioPreparationsWrapper {
+    width: 100%;
+    padding-top: 0;
+  }
+  .h1 {
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+  .div,
+  .div2 {
+    width: 100%;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .imageWrapper {
+    min-width: 100%;
+    padding: 0;
+    order: 99;          /* push comparison image after both text blocks */
+  }
+  .image {
+    height: 60vh;
+    min-height: 360px;
+    border-radius: 8px;
+  }
+  .compareSlider {
+    width: 80px;
+    margin-left: -40px;
+  }
+  .handle {
+    width: 64px;
+    height: 64px;
+    top: calc(50% - 32px);
+    left: calc(50% - 32px);
+  }
+  .line {
+    width: 6px;
+    border-radius: 3px;
+  }
+}

@@ -1,0 +1,164 @@
+/* =================================================================
+   MobileMenu — full-screen drawer that slides down from under the
+   sticky/absolute <Navbar1>.
+
+   Visibility is controlled by [data-open="true|false"] on .drawer
+   so that:
+     • on desktop (≥ 769px) it never renders visually,
+     • on mobile (≤ 768px) the navbar's burger toggles it.
+   ================================================================= */
+
+.drawer {
+  /* Always hidden on desktop — only the mobile media query exposes it. */
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .drawer {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100dvh;                    /* full viewport height */
+    z-index: 50;                      /* below navbar (z:100) but above page */
+    background-color: #f9f7f2;        /* cream — matches design */
+    overflow-y: auto;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-12px);
+    transition:
+      opacity 0.32s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .drawer[data-open="true"] {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .inner {
+    /* Drawer renders into body (portal), so we add internal padding
+       that mirrors the mobile navbar (76 + 20px buffer) plus the
+       project's default 20px horizontal gutter. */
+    padding: 110px 20px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-height: 100dvh;
+    box-sizing: border-box;
+  }
+
+  /* ── Search ───────────────────────────────────────────────── */
+  .searchWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 56px;
+    border: 1.5px solid #d8dccd;
+    border-radius: 999px;
+    background: #ffffff;
+    padding: 0 20px 0 56px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .searchWrap:focus-within {
+    border-color: #1b4332;
+    box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.12);
+  }
+  .searchIcon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #1b4332;
+    pointer-events: none;
+  }
+  .searchInput {
+    flex: 1;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: var(--font-golos-text), "Golos Text", sans-serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: #2c2c27;
+  }
+  .searchInput::placeholder {
+    color: #9a9a93;
+  }
+
+  /* ── Vertical nav ─────────────────────────────────────────── */
+  .nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 8px;
+  }
+  .navItem {
+    display: block;
+    padding: 22px 0;
+    border-bottom: 1px solid #e6e2d6;
+    font-family: var(--font-golos-text), "Golos Text", sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #2c2c27;
+    text-decoration: none;
+    text-transform: none;
+    letter-spacing: 0;
+    transition: color 0.18s ease, transform 0.18s ease;
+  }
+  .navItem:active {
+    color: #1b4332;
+    transform: translateX(2px);
+  }
+
+  /* ── Contacts block ───────────────────────────────────────── */
+  .contacts {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 24px;
+  }
+  .contactLine {
+    font-family: var(--font-golos-text), "Golos Text", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #2c2c27;
+    text-decoration: none;
+    line-height: 1.6;
+  }
+
+  /* ── CTA ──────────────────────────────────────────────────── */
+  .cta {
+    margin-top: 16px;
+    width: 100%;
+    height: 64px;
+    border: 0;
+    border-radius: 8px;
+    background: #1b4332;
+    color: #ffffff;
+    font-family: var(--font-golos-text), "Golos Text", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    box-sizing: border-box;
+    transition: background-color 0.18s ease, transform 0.12s ease;
+    box-shadow: 0 8px 20px rgba(27, 67, 50, 0.18);
+  }
+  .cta:hover { background: #143729; }
+  .cta:active { transform: translateY(1px); }
+}

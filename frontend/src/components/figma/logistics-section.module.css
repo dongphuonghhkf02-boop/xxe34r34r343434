@@ -1,0 +1,411 @@
+/* ============================================================
+ * Section: «Логістика живих рішень»
+ * Figma audited spec:
+ *   - frame:           1920 × 1372 (bg #003214 / --brand-accent-secondary-hover)
+ *   - heading frame:   1664 × 144  (centered horizontally)
+ *   - center plant:    1013 × 803
+ *   - feature blocks:  472 × 123 each, gap 8px
+ *   - tag chips:       40px height
+ * Typography uses platform tokens:
+ *   - Heading primary:  Golos Display Bold ~120 / 120%
+ *   - Heading secondary: Commissioner ~120 / 110% (text-grey)
+ *   - Feature heading:  Golos Display Bold 28 / 120%
+ *   - Feature label-top (sub): Golos Body Regular 16
+ *   - Tag body:         Golos Body 18
+ * ============================================================ */
+
+.section {
+  position: relative;
+  width: 100%;
+  min-height: 1372px;
+  background-color: var(--brand-accent-secondary-hover);
+  color: var(--bg-cream);
+  font-family: var(--font-golos-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 86px 128px 120px;
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ----- HEADING ROW ----- */
+.heading {
+  width: 1664px;
+  max-width: 100%;
+  height: 144px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: var(--ls--1);
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-size: 120px;
+  line-height: 120%;
+  font-weight: 600;
+  font-family: var(--font-golos-text);
+  flex-shrink: 0;
+  z-index: 5;
+}
+.headingPrimary {
+  color: var(--bg-cream);
+}
+.headingGap {
+  display: inline-block;
+  width: 0.5em;
+}
+.headingSecondary {
+  color: var(--text-grey);
+  font-family: var(--font-commissioner);
+  font-size: 100px;
+  font-weight: 400;
+  line-height: 110%;
+}
+
+/* ----- STAGE ----- */
+.stage {
+  position: relative;
+  width: 1664px;
+  max-width: 100%;
+  flex: 1;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1040px;
+}
+
+/* Dashed circular orbit — 921 × 921 (perfect circle) per Figma */
+.orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 921px;
+  height: 921px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--bg-green);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Center plant animation video.
+ *
+ * Source MP4 has dark-green background (#001A0A) plus black pillarboxing.
+ * Section bg is #003214 (slightly brighter dark green).
+ *
+ * With `mix-blend-mode: lighten`, every pixel of the video that is DARKER
+ * than the section bg gets replaced by the section bg — so both the black
+ * pillarboxing AND the dark-green background of the video become invisible.
+ * Only the bright bubble (water reflections, plant, droplets) blends.
+ *
+ * Mask is intentionally LARGE so the bubble and the entire plant remain
+ * fully revealed; only the far corners feather softly.
+ */
+.plant {
+  position: relative;
+  width: 1013px;
+  height: 803px;
+  object-fit: contain;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: lighten;
+  background: transparent;
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 70%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 70%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+/* ===== FEATURE BLOCKS — 472 × 123 Hug, gap 8 between icon and text ===== */
+.feature {
+  position: absolute;
+  width: 472px;
+  min-height: 123px;
+  z-index: 3;
+}
+.feature.topLeft {
+  top: 110px;
+  left: 0;
+}
+.feature.topRight {
+  top: 110px;
+  right: 0;
+}
+.feature.bottomLeft {
+  bottom: 110px;
+  left: 0;
+}
+.feature.bottomRight {
+  bottom: 110px;
+  right: 0;
+}
+
+.featureRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.featureText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.featureText.alignEnd {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.featureLabelTop {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-cream);
+  opacity: 0.85;
+  line-height: 120%;
+  font-family: var(--font-golos-text);
+}
+.featureLabelBottom {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--bg-cream);
+  line-height: 140%;
+  letter-spacing: var(--ls--0_5);
+  font-family: var(--font-golos-text);
+}
+
+.featureIcon,
+.featureIconImg {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.featureIconImg {
+  display: block;
+  object-fit: contain;
+}
+
+/* ===== FLOATING TAG CHIPS — sit on the 921×921 orbit (radius 460.5) ===== */
+.tag {
+  position: absolute;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px 16px;
+  background-color: var(--bg-card);
+  color: var(--brand-accent-secondary-default);
+  border-radius: 4px;
+  font-family: var(--font-golos-text);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 140%;
+  white-space: nowrap;
+  box-sizing: border-box;
+  z-index: 4;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.tagActive {
+  top: calc(50% - 460.5px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tagTemp {
+  top: 50%;
+  left: calc(50% - 460.5px);
+  transform: translate(-50%, -50%);
+}
+
+.tagBio {
+  top: calc(50% + 417px);
+  left: calc(50% + 195px);
+  transform: translate(-50%, -50%);
+}
+
+/* ===== Responsive ===== */
+@media screen and (max-width: 1700px) {
+  .heading {
+    font-size: 90px;
+  }
+  .headingSecondary {
+    font-size: 75px;
+  }
+}
+
+@media screen and (max-width: 1275px) {
+  .section {
+    padding: 60px 48px 80px;
+    min-height: auto;
+  }
+  .heading {
+    font-size: 70px;
+    height: auto;
+  }
+  .headingSecondary {
+    font-size: 58px;
+  }
+  .stage {
+    min-height: 800px;
+  }
+  .orbit {
+    width: 760px;
+    height: 760px;
+  }
+  .plant {
+    width: 760px;
+    height: 602px;
+  }
+  .feature {
+    width: 360px;
+  }
+  .featureLabelBottom {
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .section {
+    padding: 48px 24px 64px;
+  }
+  .heading {
+    font-size: 44px;
+    white-space: normal;
+  }
+  .headingSecondary {
+    font-size: 37px;
+  }
+  .stage {
+    min-height: 600px;
+  }
+  .orbit {
+    width: 540px;
+    height: 540px;
+  }
+  .plant {
+    width: 540px;
+    height: 428px;
+  }
+  .feature {
+    width: 260px;
+  }
+  .feature.topLeft {
+    top: 30px;
+    left: -10px;
+  }
+  .feature.topRight {
+    top: 30px;
+    right: -10px;
+  }
+  .feature.bottomLeft {
+    bottom: 30px;
+    left: -10px;
+  }
+  .feature.bottomRight {
+    bottom: 30px;
+    right: -10px;
+  }
+  .featureLabelBottom {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   MOBILE (≤ 768px) — Logistics section
+   Convert from positioned-on-orbit to vertical stack.
+   ========================================================= */
+@media screen and (max-width: 768px) {
+  .section {
+    padding: 56px 20px 64px;
+    min-height: 0;
+  }
+  .heading {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    text-align: center;
+    white-space: normal;
+    font-size: 30px;
+    line-height: 1.15;
+    letter-spacing: -0.4px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .headingGap { display: none; }
+  .headingPrimary { font-size: 32px; line-height: 1.1; }
+  .headingSecondary {
+    font-size: 26px;
+    line-height: 1.18;
+  }
+  .stage {
+    width: 100%;
+    min-height: 0;
+    margin-top: 24px;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+  }
+  /* Hide decorative orbit on mobile to avoid overflow */
+  .orbit { display: none; }
+  .plant {
+    position: static;
+    width: 320px;
+    height: 320px;
+    max-width: 100%;
+    margin: 0 auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  /* Feature blocks become normal flow, full width */
+  .feature {
+    position: static !important;
+    width: 100% !important;
+    min-height: 0;
+    margin: 0;
+  }
+  .feature.topLeft, .feature.topRight,
+  .feature.bottomLeft, .feature.bottomRight {
+    top: auto; left: auto; right: auto; bottom: auto;
+  }
+  .featureRow {
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+  }
+  .featureText { gap: 4px; }
+  .featureText.alignEnd { align-items: flex-start; text-align: left; }
+  .featureLabelTop {
+    font-size: 14px;
+    line-height: 1.3;
+  }
+  .featureLabelBottom {
+    font-size: 18px;
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+  }
+  .featureIcon,
+  .featureIconImg {
+    width: 44px;
+    height: 44px;
+  }
+  /* Hide floating tag chips on the orbit — they don't make sense without the orbit */
+  .tag { display: none; }
+}
+

@@ -1,0 +1,48 @@
+/* TiltCard — wraps a card and gives it cursor-tracking 3D parallax.
+   The whole card (border, background, shadow) lives INSIDE the rotating
+   layer, so everything moves as a single solid block — no separate
+   shadow/border floating "behind" the tilt. */
+.tilt {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  perspective: 1100px;
+  cursor: pointer;
+  /* No border, background or shadow here — the inner card owns them so
+     they rotate together with the content. */
+  --tilt-rx: 0deg;
+  --tilt-ry: 0deg;
+  --tilt-lift: 0px;
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  transform-origin: center center;
+  transform: rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry))
+    translate3d(0, calc(var(--tilt-lift) * -1), 0);
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform;
+}
+
+/* The inner content stretches to fill the wrapper */
+.inner > * {
+  flex: 1;
+  width: 100%;
+  min-height: 100%;
+}
+
+.tilt:hover .inner {
+  transition: transform 0.12s ease-out;
+}
+
+/* Reduced motion / touch — no tilt */
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .inner {
+    transform: none !important;
+    transition: none !important;
+  }
+}

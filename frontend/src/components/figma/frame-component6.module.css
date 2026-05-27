@@ -1,0 +1,583 @@
+/* =========================================================================
+   PRODUCT CARD SECTION
+   Figma exact spec:
+     Outer wrapper:    1680 × 1170  (centered inside 1920)
+     Image area:        828 × 720
+     Text block:        828 × 1136  (padding: 40)
+       └ content area:  748 × ~1056
+       └ params card:   748 × 449
+       └ purchase blk:  748 × 288
+   ========================================================================= */
+
+.productSectionWrapper {
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  padding: 80px 120px 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  text-align: left;
+  font-family: var(--font-golos-text);
+  color: var(--text-grey);
+  font-size: var(--fs-14);
+}
+
+.productSection {
+  width: 1680px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 100%;
+}
+
+/* === BREADCRUMBS ========================================================= */
+.productHeader {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+  line-height: 100%;
+}
+.breadcrumb {
+  color: var(--text-grey);
+  cursor: pointer;
+}
+.breadcrumb:hover { color: var(--text-black); }
+.flores {
+  color: var(--text-black);
+}
+
+/* === MAIN CONTENT ROW (image | text) ===================================== */
+.mainContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* === IMAGE GALLERY ======================================================= */
+.image {
+  width: 828px;
+  height: 720px;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--color-whitesmoke-100);
+  flex-shrink: 0;
+}
+.mainPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  animation: imgFade 0.35s ease;
+}
+@keyframes imgFade {
+  from { opacity: 0.4; transform: scale(1.02); }
+  to   { opacity: 1;   transform: scale(1);    }
+}
+
+.thumbStrip {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 2;
+}
+
+.thumb {
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.18s ease, transform 0.18s ease;
+  display: block;
+}
+.thumb:hover {
+  transform: translateY(-2px);
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumbActive {
+  border-color: var(--brand-accent-primary-default); /* #B3D217 */
+  box-shadow: 0 4px 12px rgba(179, 210, 23, 0.35);
+}
+
+/* === TEXT BLOCK 828 × 1136 =============================================== */
+.textBlock {
+  width: 828px;
+  min-height: 1136px;
+  border-radius: 6px;
+  background-color: var(--bg-card);
+  padding: 40px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.textBlockInner {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* === TOP ROW: tag+rating, title, description ============================= */
+.topRow {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.headlineGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tagParent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.star {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ratingNumber {
+  font-size: 14px;
+  line-height: 100%;
+  color: var(--text-grey);
+}
+.title {
+  margin: 0;
+  font-size: 48px;
+  letter-spacing: -0.5px;
+  line-height: 130%;
+  font-weight: 600;
+  font-family: var(--font-golos-text);
+  color: var(--text-black);
+}
+.titleAccent { color: var(--text-grey); }
+.description {
+  font-size: 18px;
+  line-height: 140%;
+  color: var(--text-black);
+  font-weight: 400;
+}
+
+/* === PARAMETERS CARD 748 × 449 (auto height — content driven) =========== */
+.featureGroup {
+  align-self: stretch;
+  border-radius: 6px;
+  background-color: var(--decorative-1);
+  border: 1px solid var(--decorative-2);
+  padding: 24px 32px;
+  box-sizing: border-box;
+  color: var(--text-grey);
+}
+.featureRowParent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.featureRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  align-items: flex-start;
+}
+.featureCell {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 44px;
+}
+.featureText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.featureLabel {
+  font-size: 14px;
+  line-height: 100%;
+  color: var(--text-grey);
+}
+.featureValue {
+  font-size: 18px;
+  line-height: 120%;
+  font-weight: 600;
+  color: var(--text-black);
+  white-space: nowrap;
+}
+
+/* === PURCHASE BLOCK 748 × 288 ========================================== */
+.purchaseBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.optionsRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.optionsGroup,
+.counterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.counterGroup {
+  width: 120px;
+}
+.optionsLabel {
+  font-size: 12px;
+  line-height: 100%;
+  color: var(--text-grey);
+}
+.volumeChipGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.priceRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.availabilityStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  background: #f3f7e4;
+  border: 1px solid #d9e6a3;
+  font-family: var(--font-golos-text);
+  width: fit-content;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.availabilityStatus[data-instock="false"] {
+  background: #fbeaea;
+  border-color: #f1cfcc;
+}
+.availabilityDot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #6aa84f;
+  box-shadow: 0 0 0 2px rgba(106,168,79,0.18);
+  flex-shrink: 0;
+}
+.availabilityDot::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background-color: rgba(106,168,79,0.55);
+  animation: dotPulse 1.8s ease-out infinite;
+  pointer-events: none;
+}
+.availabilityStatus[data-instock="false"] .availabilityDot {
+  background-color: #c14a3c;
+  box-shadow: 0 0 0 2px rgba(193,74,60,0.16);
+}
+.availabilityStatus[data-instock="false"] .availabilityDot::before {
+  background-color: rgba(193,74,60,0.55);
+  animation-duration: 2.6s;
+}
+@keyframes dotPulse {
+  0%   { transform: scale(0.9); opacity: 0.55; }
+  60%  { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.availabilityText {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 100%;
+  color: #1b4332;
+}
+.availabilityStatus[data-instock="false"] .availabilityText {
+  color: #8b3328;
+}
+.priceParent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.price {
+  margin: 0;
+  font-size: 48px;
+  letter-spacing: -0.5px;
+  line-height: 130%;
+  font-weight: 600;
+  font-family: var(--font-golos-text);
+  color: var(--text-black);
+}
+.priceUnit {
+  font-size: 12px;
+  color: var(--text-grey);
+}
+
+.buttonsRow {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+/* === DELIVERY ROW ======================================================= */
+.deliveryRow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--text-black);
+}
+.deliveryHeading {
+  font-weight: 500;
+  line-height: 100%;
+}
+.deliveryLogos {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+  font-family: var(--font-inter);
+  font-size: 18px;
+}
+.deliveryPartner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.deliveryIcon {
+  width: 50px;
+  height: 50px;
+  display: block;
+  object-fit: contain;
+}
+.deliveryName {
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.deliveryLink {
+  align-self: flex-start;
+}
+.deliveryToggle {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--font-golos-text);
+  font-size: 12px;
+  color: var(--text-grey);
+  border-bottom: 1px dashed var(--text-black);
+  line-height: 1;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.deliveryToggle:hover {
+  color: var(--brand-accent-secondary-default);
+  border-bottom-color: var(--brand-accent-secondary-default);
+}
+.deliveryToggle:focus-visible {
+  outline: 2px solid var(--brand-accent-primary-default);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.deliveryChevron {
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+.deliveryChevronOpen {
+  transform: rotate(180deg);
+}
+
+/* === Раскрывающаяся панель доставки ====================================== */
+.deliveryDetails {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease, margin-top 0.3s ease;
+  margin-top: 0;
+}
+.deliveryDetailsOpen {
+  grid-template-rows: 1fr;
+  margin-top: 4px;
+}
+.deliveryDetailsInner {
+  overflow: hidden;
+  background-color: var(--decorative-1);
+  border: 1px solid var(--decorative-2);
+  border-radius: 6px;
+  padding: 0 20px;
+  max-height: 0;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  font-size: 14px;
+  line-height: 150%;
+  color: var(--text-black);
+}
+.deliveryDetailsOpen .deliveryDetailsInner {
+  max-height: 1000px;
+  padding: 18px 20px;
+}
+.deliveryList {
+  margin: 0;
+  padding-left: 18px;
+  list-style: disc;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.deliveryList strong {
+  color: var(--brand-accent-secondary-default);
+  font-weight: 600;
+}
+
+/* === STORAGE INFO ROWS =================================================== */
+.storageInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 18px;
+  color: var(--text-black);
+}
+.storageRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.storageText {
+  line-height: 140%;
+}
+
+/* =====================================================================
+   COMPREHENSIVE MOBILE — ≤ 768px (product hero card)
+   ===================================================================== */
+@media screen and (max-width: 768px) {
+  .productSectionWrapper {
+    padding: 24px 16px 0;
+  }
+  .productSection {
+    width: 100%;
+    gap: 18px;
+  }
+  .productHeader {
+    font-size: 12px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .mainContent {
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+  .image {
+    width: 100%;
+    height: 380px;
+    border-radius: 12px;
+  }
+  .thumbStrip {
+    top: 12px;
+    left: 12px;
+    flex-direction: row;
+    gap: 8px;
+  }
+  .thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+  }
+
+  .textBlock {
+    width: 100%;
+    min-height: 0;
+    padding: 18px;
+    border-radius: 12px;
+  }
+  .textBlockInner {
+    gap: 18px;
+  }
+  .topRow { gap: 14px; }
+  .headlineGroup { gap: 8px; }
+  .tagParent { gap: 8px; }
+  .title {
+    font-size: 24px;
+    line-height: 1.18;
+    letter-spacing: -0.2px;
+  }
+  .description {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  /* Parameters card — 3 cols → 2 cols */
+  .featureGroup {
+    padding: 16px 18px;
+    border-radius: 10px;
+  }
+  .featureRowParent { gap: 14px; }
+  .featureRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+  }
+  .featureCell { min-height: 0; gap: 6px; }
+  .featureLabel { font-size: 12px; }
+  .featureValue {
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .purchaseBlock { gap: 14px; }
+  .optionsRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .counterGroup {
+    width: 100%;
+  }
+  .volumeChipGroup {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .priceRow { gap: 8px; }
+  .storageInfo {
+    font-size: 14px;
+    gap: 6px;
+  }
+
+  /* Delivery toggle */
+  .deliveryDetailsInner {
+    font-size: 13px;
+    padding: 0 14px;
+  }
+  .deliveryDetailsOpen .deliveryDetailsInner {
+    padding: 14px;
+  }
+  .deliveryList { gap: 6px; padding-left: 16px; }
+}
+
+@media screen and (max-width: 380px) {
+  .title { font-size: 22px; }
+  .image { height: 320px; }
+}

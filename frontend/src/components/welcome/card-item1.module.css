@@ -1,0 +1,194 @@
+.cardItem,
+.imageContainer {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.cardLink {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.cardItem {
+  flex: 1;
+  width: 100%;
+  border-radius: 8px;
+  background-color: var(--bg-card);
+  border: 1px solid #d9dfd6;
+  align-items: center;
+  text-align: left;
+  font-size: var(--fs-12);
+  color: var(--brand-accent-secondary-default);
+  font-family: var(--font-golos-text);
+  /* Permanent shadow + transitions only on border/shadow. The 3D tilt
+     is owned by the parent TiltCard wrapper, so the whole card —
+     border, background, shadow, image, content — rotates as one. */
+  box-shadow: 0 8px 24px -16px rgba(20, 40, 22, 0.18),
+              0 2px 6px -3px rgba(20, 40, 22, 0.08);
+  transition: border-color 0.25s ease, box-shadow 0.3s ease;
+}
+.cardLink:hover .cardItem {
+  border-color: #b3d217;
+  box-shadow: 0 28px 60px -24px rgba(20, 40, 22, 0.32),
+              0 12px 24px -16px rgba(20, 40, 22, 0.22);
+}
+.imageContainer {
+  align-self: stretch;
+  height: var(--height-420);
+  flex-shrink: 0;
+  align-items: flex-start;
+  position: relative;
+  isolation: isolate;
+}
+.imageContainerChild {
+  width: var(--width-363);
+  height: var(--height-360);
+  top: calc(50% - 166px);
+  left: calc(50% - 185px);
+  filter: blur(174.3px);
+  border-radius: var(--br-501);
+  background-color: var(--bg-card);
+  z-index: 0;
+}
+.imageContainerChild,
+.photoContainer,
+.tags {
+  position: absolute;
+  margin: 0 !important;
+}
+.tags {
+  top: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-12);
+  z-index: 1;
+}
+.photoContainer {
+  width: var(--width-400);
+  height: var(--height-388);
+  bottom: 0;
+  left: calc(50% - 200px);
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 2;
+}
+.photoIcon {
+  position: absolute;
+  top: calc(50% - 153px);
+  left: calc(50% - 158px);
+  width: 100%;
+  height: var(--height-307);
+  object-fit: cover;
+}
+.content,
+.infoBlock,
+.titleBlock {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.content {
+  flex: 1;
+  justify-content: space-between;
+  padding: var(--padding-0) var(--padding-32) var(--padding-40);
+  gap: var(--gap-20);
+  font-size: var(--fs-14);
+  color: var(--text-black);
+}
+.infoBlock,
+.titleBlock {
+  gap: var(--gap-16);
+}
+.titleBlock {
+  gap: var(--gap-12);
+}
+.rating,
+.star {
+  display: flex;
+  align-items: center;
+}
+.rating {
+  align-self: stretch;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: var(--gap-8) var(--gap-12);
+}
+.star {
+  gap: var(--gap-8);
+}
+.ratingCount {
+  position: relative;
+  line-height: 100%;
+}
+.titleGroup {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: var(--fs-24);
+}
+.div,
+.h3 {
+  align-self: stretch;
+  position: relative;
+}
+.h3 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 600;
+  font-family: inherit;
+}
+.div {
+  font-size: var(--fs-18);
+  line-height: 140%;
+}
+.specRow,
+.specs {
+  align-self: stretch;
+  display: flex;
+  gap: var(--gap-4);
+}
+.specs {
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: var(--fs-12);
+}
+.specRow {
+  align-items: center;
+}
+.div2 {
+  position: relative;
+}
+.specRow2 {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-4);
+}
+.div3 {
+  width: var(--width-128);
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.priceRow {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-20);
+  font-size: var(--fs-32);
+}
+.h2 {
+  margin: 0;
+  position: relative;
+  font-size: inherit;
+  line-height: 140%;
+  font-weight: 700;
+  font-family: inherit;
+}

@@ -1,0 +1,46 @@
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;                                  /* 12px between label and circle */
+  text-align: left;
+  font-size: 16px;
+  color: #1b4332;
+  font-family: var(--font-golos-text);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.div {
+  position: relative;
+  line-height: 120%;
+  font-weight: 500;                           /* Golos Text Medium 16px */
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.iconContainer {
+  width: 48px;                                /* Icon Container 48×48 */
+  height: 48px;
+  border-radius: 50%;
+  background-color: #1b4332;
+  color: #ffffff;                             /* arrow uses currentColor */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.primaryButton:hover .iconContainer {
+  background-color: #143628;
+  box-shadow: 0 6px 18px rgba(28, 60, 39, 0.25);
+}
+
+.primaryButton:active .iconContainer {
+  transform: scale(0.96);
+}
