@@ -719,32 +719,78 @@ const About: React.FC = () => {
             />
             <div className={styles.missionTextCol}>
               <div className={styles.missionTextTop}>
-                <h3 className={styles.missionLead}>
-                  Хімія дає ілюзію швидкості, часто ціною опіків та виснаження
-                  ґрунту.
-                </h3>
+                <RevealHeading
+                  as="h3"
+                  className={styles.missionLead}
+                  baseDelay={100}
+                  stagger={45}
+                  block
+                  lines={[
+                    [
+                      {
+                        text:
+                          "Хімія дає ілюзію швидкості, часто ціною опіків та виснаження ґрунту.",
+                      },
+                    ],
+                  ]}
+                />
                 <div className={styles.missionStatement}>
-                  <h2 className={styles.missionStatementTitle}>Наша місія</h2>
+                  <RevealHeading
+                    as="h2"
+                    className={styles.missionStatementTitle}
+                    baseDelay={100}
+                    stagger={60}
+                    lines={[[{ text: "Наша місія" }]]}
+                  />
                   <div className={styles.missionStatementBody}>
-                    <p className={styles.missionStatementText}>
-                      шлях без компромісів: ми інтегруємо мікробіологію в існуючі
-                      технології так, щоб ви отримали і рекордний врожай, і
-                      чистий продукт з високою ринковою цінністю.
-                    </p>
-                    <p className={styles.missionStatementText}>
-                      Біопрепарати сьогодні -  найрозумніша інвестиція в землю та
-                      життя майбутнього покоління.
-                    </p>
+                    <RevealHeading
+                      as="p"
+                      className={styles.missionStatementText}
+                      baseDelay={150}
+                      stagger={28}
+                      block
+                      lines={[
+                        [
+                          {
+                            text:
+                              "шлях без компромісів: ми інтегруємо мікробіологію в існуючі технології так, щоб ви отримали і рекордний врожай, і чистий продукт з високою ринковою цінністю.",
+                          },
+                        ],
+                      ]}
+                    />
+                    <RevealHeading
+                      as="p"
+                      className={styles.missionStatementText}
+                      baseDelay={250}
+                      stagger={28}
+                      block
+                      lines={[
+                        [
+                          {
+                            text:
+                              "Біопрепарати сьогодні - найрозумніша інвестиція в землю та життя майбутнього покоління.",
+                          },
+                        ],
+                      ]}
+                    />
                   </div>
                 </div>
               </div>
               <div className={styles.missionAuthor}>
-                <h3 className={styles.missionAuthorName}>
-                  Михайло Севастьянов
-                </h3>
-                <h4 className={styles.missionAuthorRole}>
-                  Засновник &amp; власник
-                </h4>
+                <RevealHeading
+                  as="h3"
+                  className={styles.missionAuthorName}
+                  baseDelay={100}
+                  stagger={55}
+                  lines={[[{ text: "Михайло Севастьянов" }]]}
+                />
+                <RevealHeading
+                  as="h4"
+                  className={styles.missionAuthorRole}
+                  baseDelay={150}
+                  stagger={45}
+                  lines={[[{ text: "Засновник & власник" }]]}
+                />
               </div>
             </div>
           </div>
