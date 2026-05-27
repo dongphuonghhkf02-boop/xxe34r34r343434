@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Seo from "../components/Seo";
 import Navbar1 from "../components/figma/navbar1";
 import Footer1 from "../components/figma/footer1";
@@ -178,13 +178,8 @@ const TIMELINE_PERIODS = [
   },
 ];
 
-/* Lab-cards stack animation constants — kept in DESIGN-PX (1920 width).
-   They MUST stay in sync with about.module.css (.labCardTrack height,
-   .labCardStage height, .labCardDeck height). */
-const LAB_STAGE_HEIGHT = 855;        // title + gap + deck (in design-px)
-const LAB_TRACK_HEIGHT = 2955;       // stage + (N-1) * scrollPerCard
-const LAB_PIN_TOP = 140;             // pin offset from viewport top
-const LAB_SCROLL_PER_CARD = 700;     // scroll-room each card transition
+/* Lab cards count (see LAB_CARDS array above). All other animation
+   constants live inside the About component (snap-lock pattern). */
 
 const About: React.FC = () => {
   // History/timeline interactive state — defaults to "2005" period (idx 1).
@@ -319,180 +314,240 @@ const About: React.FC = () => {
     };
   }, [numbersStarted]);
 
-  // Refs used by the scroll-driven card stack animation.
-  const labTrackRef = useRef<HTMLDivElement | null>(null);
-  const labStageRef = useRef<HTMLDivElement | null>(null);
-  const labCardsRef = useRef<HTMLDivElement[]>([]);
+  // ----------------- LAB section: snap-lock scroll-jack -----------------
+  // Поведінка (по аналогії з welcome HowItWorksSection1 "Технологія Врожаю"):
+  //   • Коли блок наближається до центру viewport — JS жорстко snap-it scrollY
+  //     у точку snap-center і входить у режим lock.
+  //   • У lock усі wheel/touch перехоплюються (preventDefault), кожен снап
+  //     перемикає активну картку 01 → 02 → 03 → 04 (або назад).
+  //   • Картка-наступник «підіймається знизу», попередня — «йде вгору».
+  //   • На крайній картці накопичується overshoot, після порогу — exit lock.
+  // -----------------------------------------------------------------------
+  const N_LAB = LAB_CARDS.length;
+  const LAB_SLIDE_PX = 760;
+  const LAB_WHEEL_THRESHOLD = 40;
+  const LAB_SNAP_LOCK_MS = 550;
+  const LAB_ENTRY_TOLERANCE = 220;
+  const LAB_EXIT_OVERSHOOT = 220;
+  const LAB_EXIT_COOLDOWN = 1500;
 
-  // useLayoutEffect (not useEffect) so we run BEFORE the browser paints,
-  // avoiding a flash where cards appear at translateY 100% briefly.
-  useLayoutEffect(() => {
-    // Skip the scroll-driven pin/stack animation on mobile — there cards
-    // render as a simple stacked column (see about.module.css @media).
-    if (typeof window !== "undefined" &&
-        window.matchMedia &&
-        window.matchMedia("(max-width: 768px)").matches) {
+  const labSectionRef = useRef<HTMLElement | null>(null);
+  const labCardsRef = useRef<HTMLDivElement[]>([]);
+  const [labActiveIdx, setLabActiveIdx] = useState(0);
+  const [labLocked, setLabLocked] = useState(false);
+
+  const labActiveIdxRef = useRef(0);
+  const labLockedRef = useRef(false);
+  const labLockedScrollRef = useRef(0);
+  const labAccumRef = useRef(0);
+  const labOvershootRef = useRef(0);
+  const labLockUntilRef = useRef(0);
+  const labExitUntilRef = useRef(0);
+  const labLastScrollYRef = useRef(0);
+
+  useEffect(() => {
+    labActiveIdxRef.current = labActiveIdx;
+  }, [labActiveIdx]);
+  useEffect(() => {
+    labLockedRef.current = labLocked;
+  }, [labLocked]);
+
+  // Apply transforms to lab cards based on active index.
+  useEffect(() => {
+    if (isMobile) {
+      labCardsRef.current.forEach((el) => {
+        if (!el) return;
+        el.style.transform = "";
+        el.style.opacity = "1";
+      });
       return;
     }
-    const track = labTrackRef.current;
-    const stage = labStageRef.current;
-    const cards = labCardsRef.current.filter(Boolean);
-    if (!track || !stage || cards.length === 0) return;
-
-    const getScale = () => {
-      const raw = getComputedStyle(document.documentElement)
-        .getPropertyValue("--app-scale")
-        .trim();
-      const s = parseFloat(raw);
-      return Number.isFinite(s) && s > 0 ? s : 1;
-    };
-
-    const clamp = (v: number, min: number, max: number) =>
-      v < min ? min : v > max ? max : v;
-
-    // Cached document-space top of the track.
-    let trackDocTop = 0;
-    const measureTrackDocTop = () => {
-      const r = track.getBoundingClientRect();
-      trackDocTop = window.scrollY + r.top;
-    };
-
-    // Last-applied transform values per element. We only write to the
-    // DOM when the rounded integer value actually changes — eliminates
-    // sub-pixel flicker that arises from the scaled parent.
-    let lastStageY = -1;
-    const lastCardY: number[] = new Array(cards.length).fill(-1);
-
-    const computeAndApply = () => {
-      const scale = getScale();
-      const pinReal = LAB_PIN_TOP * scale;
-      const stageReal = LAB_STAGE_HEIGHT * scale;
-      const trackHeightReal = LAB_TRACK_HEIGHT * scale;
-      const scrollPerCardReal = LAB_SCROLL_PER_CARD * scale;
-
-      const trackTopReal = trackDocTop - window.scrollY;
-      const passedReal = pinReal - trackTopReal;
-
-      // Stage pin: clamp so it never leaves the track bounds.
-      const maxStageOffsetReal = Math.max(0, trackHeightReal - stageReal);
-      const stageOffsetReal = clamp(passedReal, 0, maxStageOffsetReal);
-      // Convert real-px back to design-px (since the child of the
-      // scaled container applies transforms in design space).
-      const stageOffsetDesign = Math.round(stageOffsetReal / scale);
-
-      if (stageOffsetDesign !== lastStageY) {
-        lastStageY = stageOffsetDesign;
-        stage.style.transform = `translate3d(0, ${stageOffsetDesign}px, 0)`;
-      }
-
-      // Per-card transitions.
-      cards.forEach((card, i) => {
-        let pct: number;
-        if (i === 0) {
-          pct = 0;
-        } else {
-          const sliceStart = (i - 1) * scrollPerCardReal;
-          const sliceEnd = i * scrollPerCardReal;
-          const local = clamp(
-            (passedReal - sliceStart) / (sliceEnd - sliceStart),
-            0,
-            1,
-          );
-          pct = (1 - local) * 100;
-        }
-        // Snap to 0.1% steps so tiny scroll changes don't repaint.
-        const snapped = Math.round(pct * 10) / 10;
-        if (snapped !== lastCardY[i]) {
-          lastCardY[i] = snapped;
-          card.style.transform = `translate3d(0, ${snapped}%, 0)`;
-        }
-      });
-    };
-
-    // Continuous RAF loop while the section is in (or near) the pin
-    // range. This decouples updates from the lagging scroll event and
-    // ensures transforms commit in the SAME compositor frame as the
-    // page scroll, producing rock-solid pixel-perfect pinning.
-    let rafId: number | null = null;
-    let isActive = false;
-    const tick = () => {
-      computeAndApply();
-      if (isActive) {
-        rafId = window.requestAnimationFrame(tick);
+    labCardsRef.current.forEach((el, i) => {
+      if (!el) return;
+      if (i === labActiveIdx) {
+        el.style.transform = "translate3d(0, 0, 0)";
+        el.style.opacity = "1";
+        el.style.zIndex = "50";
+      } else if (i > labActiveIdx) {
+        el.style.transform = `translate3d(0, ${LAB_SLIDE_PX}px, 0)`;
+        el.style.opacity = "0";
+        el.style.zIndex = String(10 + i);
       } else {
-        rafId = null;
+        el.style.transform = `translate3d(0, -${LAB_SLIDE_PX}px, 0)`;
+        el.style.opacity = "0";
+        el.style.zIndex = String(10 + i);
       }
-    };
-    const startLoop = () => {
-      if (isActive) return;
-      isActive = true;
-      if (rafId == null) rafId = window.requestAnimationFrame(tick);
-    };
-    const stopLoop = () => {
-      isActive = false;
-      if (rafId != null) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-    };
-
-    // Use IntersectionObserver to toggle the RAF loop only while the
-    // section is within (or near) the viewport. This avoids burning
-    // CPU on every frame when the section is off-screen.
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            measureTrackDocTop();
-            startLoop();
-          } else {
-            // Apply one last update so the cards settle at the
-            // correct end state, then stop the loop.
-            computeAndApply();
-            stopLoop();
-          }
-        }
-      },
-      {
-        // Generous rootMargin so we start updating BEFORE the section
-        // is visually visible — eliminates any pop-in flicker on
-        // entry/exit.
-        rootMargin: "200px 0px 200px 0px",
-        threshold: 0,
-      },
-    );
-    io.observe(track);
-
-    // Initial paint: measure & apply once synchronously, then again
-    // after layout settles (double-RAF safety net for late CSS scale).
-    measureTrackDocTop();
-    computeAndApply();
-    let raf1: number | null = null;
-    let raf2: number | null = null;
-    raf1 = window.requestAnimationFrame(() => {
-      raf2 = window.requestAnimationFrame(() => {
-        measureTrackDocTop();
-        computeAndApply();
-      });
     });
+  }, [labActiveIdx, isMobile]);
 
-    const onResize = () => {
-      measureTrackDocTop();
-      computeAndApply();
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      io.disconnect();
-      stopLoop();
-      window.removeEventListener("resize", onResize);
-      if (raf1 != null) cancelAnimationFrame(raf1);
-      if (raf2 != null) cancelAnimationFrame(raf2);
-    };
+  // Compute the document scrollY that centers the lab section in viewport.
+  const computeLabSnapTarget = useCallback((): number => {
+    const sec = labSectionRef.current;
+    if (!sec) return window.scrollY;
+    const r = sec.getBoundingClientRect();
+    const sectionDocTop = r.top + window.scrollY;
+    const vh = window.innerHeight;
+    return sectionDocTop + r.height / 2 - vh / 2;
   }, []);
 
-    // Silence unused-var lint when useEffect is imported but unused here.
-  void useEffect;
+  const enterLabLock = useCallback(
+    (initialIdx: number) => {
+      if (labLockedRef.current) return;
+      const target = computeLabSnapTarget();
+      labLockedScrollRef.current = target;
+      window.scrollTo({ top: target, behavior: "auto" });
+      labAccumRef.current = 0;
+      labOvershootRef.current = 0;
+      labLockUntilRef.current = Date.now() + 200;
+      setLabActiveIdx(initialIdx);
+      setLabLocked(true);
+    },
+    [computeLabSnapTarget]
+  );
+
+  const exitLabLock = useCallback((dir: "down" | "up") => {
+    if (!labLockedRef.current) return;
+    setLabLocked(false);
+    labAccumRef.current = 0;
+    labOvershootRef.current = 0;
+    labExitUntilRef.current = Date.now() + LAB_EXIT_COOLDOWN;
+    const sec = labSectionRef.current;
+    if (sec) {
+      const r = sec.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const shift =
+        dir === "down" ? r.height / 2 + vh / 2 + 1 : -(r.height / 2 + vh / 2 + 1);
+      window.scrollBy({ top: shift, behavior: "auto" });
+    }
+  }, []);
+
+  // Scroll listener — checks whether to enter lock, holds scroll while locked.
+  useEffect(() => {
+    if (isMobile) return;
+    labLastScrollYRef.current = window.scrollY;
+    const onScroll = () => {
+      const cur = window.scrollY;
+      const prev = labLastScrollYRef.current;
+      const dir: "down" | "up" = cur > prev ? "down" : "up";
+      labLastScrollYRef.current = cur;
+
+      if (labLockedRef.current) {
+        if (Math.abs(cur - labLockedScrollRef.current) > 1) {
+          window.scrollTo({ top: labLockedScrollRef.current, behavior: "auto" });
+        }
+        return;
+      }
+
+      const sec = labSectionRef.current;
+      if (!sec) return;
+      const r = sec.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const blockCenter = r.top + r.height / 2;
+      const vhCenter = vh / 2;
+      const delta = Math.abs(blockCenter - vhCenter);
+
+      if (delta < LAB_ENTRY_TOLERANCE) {
+        if (Date.now() < labExitUntilRef.current) return;
+        const initial = dir === "down" ? 0 : N_LAB - 1;
+        enterLabLock(initial);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [enterLabLock, isMobile, N_LAB]);
+
+  // Wheel / touch — active only while locked.
+  useEffect(() => {
+    if (isMobile) return;
+
+    const trySnap = (dir: 1 | -1): boolean => {
+      const cur = labActiveIdxRef.current;
+      const now = Date.now();
+      if (now < labLockUntilRef.current) return false;
+      if (dir > 0 && cur < N_LAB - 1) {
+        setLabActiveIdx(cur + 1);
+        labAccumRef.current = 0;
+        labOvershootRef.current = 0;
+        labLockUntilRef.current = now + LAB_SNAP_LOCK_MS;
+        return true;
+      }
+      if (dir < 0 && cur > 0) {
+        setLabActiveIdx(cur - 1);
+        labAccumRef.current = 0;
+        labOvershootRef.current = 0;
+        labLockUntilRef.current = now + LAB_SNAP_LOCK_MS;
+        return true;
+      }
+      return false;
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!labLockedRef.current) return;
+      e.preventDefault();
+      const cur = labActiveIdxRef.current;
+      const dy = e.deltaY;
+      const now = Date.now();
+      if (now < labLockUntilRef.current) return;
+
+      if (dy > 0) {
+        if (cur < N_LAB - 1) {
+          labAccumRef.current += dy;
+          if (labAccumRef.current >= LAB_WHEEL_THRESHOLD) trySnap(1);
+        } else {
+          labOvershootRef.current += dy;
+          if (labOvershootRef.current >= LAB_EXIT_OVERSHOOT) exitLabLock("down");
+        }
+      } else if (dy < 0) {
+        if (cur > 0) {
+          labAccumRef.current += dy;
+          if (labAccumRef.current <= -LAB_WHEEL_THRESHOLD) trySnap(-1);
+        } else {
+          labOvershootRef.current += dy;
+          if (labOvershootRef.current <= -LAB_EXIT_OVERSHOOT) exitLabLock("up");
+        }
+      }
+    };
+
+    // Touch support — analogous accumulation
+    let touchStartY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      if (!labLockedRef.current) return;
+      touchStartY = e.touches[0]?.clientY ?? 0;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (!labLockedRef.current) return;
+      e.preventDefault();
+      const cur = labActiveIdxRef.current;
+      const y = e.touches[0]?.clientY ?? 0;
+      const dy = touchStartY - y;
+      const now = Date.now();
+      if (now < labLockUntilRef.current) return;
+      if (Math.abs(dy) < 30) return;
+      touchStartY = y;
+      if (dy > 0) {
+        if (cur < N_LAB - 1) trySnap(1);
+        else {
+          labOvershootRef.current += dy;
+          if (labOvershootRef.current >= LAB_EXIT_OVERSHOOT) exitLabLock("down");
+        }
+      } else {
+        if (cur > 0) trySnap(-1);
+        else {
+          labOvershootRef.current += dy;
+          if (labOvershootRef.current <= -LAB_EXIT_OVERSHOOT) exitLabLock("up");
+        }
+      }
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel as any);
+      window.removeEventListener("touchstart", onTouchStart as any);
+      window.removeEventListener("touchmove", onTouchMove as any);
+    };
+  }, [exitLabLock, isMobile, N_LAB]);
 
   return (
     <div className={styles.page} data-testid="about-page">
@@ -697,10 +752,10 @@ const About: React.FC = () => {
       </section>
 
       {/* ============ 4. LAB → FIELD ============ */}
-      <section className={styles.labWrap} data-testid="about-lab">
+      <section className={styles.labWrap} data-testid="about-lab" ref={labSectionRef}>
         <div className={styles.labInner}>
-          <div className={styles.labCardTrack} ref={labTrackRef}>
-            <div className={styles.labCardStage} ref={labStageRef}>
+          <div className={styles.labCardTrack}>
+            <div className={styles.labCardStage}>
               <h2 className={styles.labTitle}>
                 <span className={styles.labTitleAccent}>Від лабораторії </span>
                 до вашого поля
@@ -723,6 +778,21 @@ const About: React.FC = () => {
                     </div>
                     <img loading="lazy" decoding="async" className={styles.labCardImg} src={c.img} alt="" />
                   </div>
+                ))}
+              </div>
+              {/* Dot indicator (clickable for accessibility) */}
+              <div className={styles.labDots} role="tablist" aria-label="Етапи виробництва">
+                {LAB_CARDS.map((c, idx) => (
+                  <button
+                    key={c.num}
+                    type="button"
+                    role="tab"
+                    aria-selected={idx === labActiveIdx}
+                    aria-label={`Етап ${c.num}: ${c.title}`}
+                    onClick={() => setLabActiveIdx(idx)}
+                    className={`${styles.labDot} ${idx === labActiveIdx ? styles.labDotActive : ""}`}
+                    data-testid={`lab-dot-${idx}`}
+                  />
                 ))}
               </div>
             </div>

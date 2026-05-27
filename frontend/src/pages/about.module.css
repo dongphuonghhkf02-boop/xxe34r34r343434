@@ -322,35 +322,20 @@
 }
 
 /* ============ 4. LAB → FIELD (4 cards 01-04) ============
-   Scroll-driven stacking like x2ycreative.com /services.
-
-   IMPORTANT: The app is wrapped in <ScaledShell> which applies
-   transform: scale() on an ancestor. That breaks CSS `position: sticky`
-   (sticky offsets get measured against the transformed containing
-   block, not the viewport). So we DO NOT rely on sticky here — we use
-   a JS-driven scroll-progress model with absolutely-positioned cards
-   inside a tall scroll-track:
-
-     .labCardTrack  — height = (N_cards) × stage-height in design-px.
-                       Provides the vertical scroll room.
-     .labCardStage  — pinned visually via JS (transform translateY) to
-                       sit just under the navbar while the track scrolls.
-                       Contains the TITLE + the deck of cards, so the
-                       title stays pinned with the cards (x2ycreative
-                       Services-style behaviour).
-     .labCardDeck   — fixed-height area below the title where the cards
-                       live. Each .labCard is absolutely positioned and
-                       transformed via JS to slide up & cover the prev.
-     .labCard       — absolute; transform: translateY(progress) — driven
-                       by JS so each next card slides up from below and
-                       fully covers the previous (z-index = order).
-*/
+   Snap-lock карусель — як на welcome / «Технологія Врожаю».
+   Секція має одну висоту viewport (~100vh), не tall scroll-track.
+   JS у about.tsx перехоплює scroll коли центр секції біля центру
+   viewport — wheel/touch переключає активну картку. Картки stack-аються
+   в одному deck, JS пише transform translateY: 0 (active) / +760px
+   (next) / -760px (prev). Smooth slide-transition робить CSS.
+   ============================================================ */
 .labWrap {
   align-self: stretch;
-  padding: 0 120px 174px;
+  padding: 80px 120px 80px;
   display: flex;
   justify-content: center;
   box-sizing: border-box;
+  min-height: 1080px;
 }
 .labInner {
   width: 100%;
@@ -359,7 +344,7 @@
   flex-direction: column;
 }
 .labTitle {
-  margin: 0;
+  margin: 0 0 60px 0;
   width: 828px;
   max-width: 100%;
   font-size: 82px;
@@ -374,56 +359,26 @@
   color: #93928c;
   font-weight: 500;
 }
-/* Scroll track: tall area that provides scroll room. Height is EXPLICIT
-   so it never collapses during initial render. */
 .labCardTrack {
   position: relative;
   width: 100%;
-  /* (stage height) + (N-1) * scrollPerCard
-     = 855 + 3 * 700 = 2955 design-px. */
-  height: 2955px;
-  min-height: 2955px;
 }
-/* Visual pin: this stage holds BOTH the title and the cards. JS
-   translates it via transform on every scroll synchronously so it
-   visually sticks under the navbar.
-
-   The transform is updated inside requestAnimationFrame to ensure
-   it commits in lockstep with the browser's paint cycle, eliminating
-   the 1-frame lag that produced visible jitter on the previous
-   implementation that wrote transforms directly in the scroll
-   handler. */
 .labCardStage {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 855px;
+  position: relative;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 75px;
-  /* GPU-promoted layer so transforms don't trigger repaint and the
-     browser composites them in lockstep with scroll. */
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  /* Pixel-snap the transform so partial-px values from the scaled
-     parent don't cause sub-pixel flicker. */
-  contain: layout paint;
+  gap: 40px;
 }
-/* The deck is the actual card "window" — fixed height so all 4 cards
-   stack inside it pixel-perfect. overflow:hidden clips the cards that
-   are still translated below. */
 .labCardDeck {
   position: relative;
   width: 100%;
   height: 580px;
-  /* push deck to bottom of stage so title sits on top regardless of
-     its actual rendered height. */
-  margin-top: auto;
   overflow: hidden;
 }
 .labCard {
   position: absolute;
-  inset: 0;                  /* All cards stacked at exact same coords */
+  inset: 0;
   border-radius: 6px;
   background-color: #fff;
   border: 1px solid #f7fae8;
@@ -435,12 +390,18 @@
   padding: 38px 60px;
   gap: 20px;
   box-shadow: 0 24px 60px -28px rgba(27, 67, 50, 0.18);
-  /* Default initial state: every card except the first is moved fully
-     below the deck (translateY 100%). JS overwrites this per-card. */
-  transform: translate3d(0, 100%, 0);
-  will-change: transform;
+  transform: translate3d(0, 760px, 0);
+  opacity: 0;
+  will-change: transform, opacity;
+  transition:
+    transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.labCard:nth-child(1) { z-index: 1; transform: translate3d(0, 0, 0); }
+.labCard:nth-child(1) {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  z-index: 50;
+}
 .labCard:nth-child(2) { z-index: 2; }
 .labCard:nth-child(3) { z-index: 3; }
 .labCard:nth-child(4) { z-index: 4; }
@@ -488,6 +449,29 @@
   border-radius: 6px;
   object-fit: cover;
   flex-shrink: 0;
+}
+/* Dot indicator (clickable). */
+.labDots {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.labDot {
+  width: 36px;
+  height: 6px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(44, 44, 39, 0.18);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s ease, width 0.25s ease;
+}
+.labDot:hover { background: rgba(44, 44, 39, 0.4); }
+.labDotActive {
+  background: #1b4332;
+  width: 64px;
 }
 
 /* ============ 5. LOGISTICS (dark teal section) ============ */
@@ -1227,6 +1211,7 @@
   /* 4) LAB → FIELD — convert pinned stack to vertical list */
   .labWrap {
     padding: 0 20px 48px;
+    min-height: 0;
   }
   .labInner { max-width: 100%; }
   .labTitle {
@@ -1268,8 +1253,13 @@
     border-radius: 12px;
     gap: 14px;
     transform: none !important;
+    opacity: 1 !important;
     will-change: auto;
+    transition: none !important;
     box-shadow: 0 4px 24px rgba(27, 67, 50, 0.06);
+  }
+  .labDots {
+    display: none !important;
   }
   .labCardLeft {
     width: 100%;
