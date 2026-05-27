@@ -272,35 +272,41 @@ const ClockIcon: React.FC = () => (
 );
 
 /* StepsList — block-by-block reveal of the 4 timeline steps.
-   Один IntersectionObserver на батьківський контейнер; кожен рядок
-   з'являється як ЦІЛИЙ блок (opacity + slide-up), а stagger дає CSS
-   (transition-delay для :nth-child).  Не зліва-направо, не зверху-вниз —
-   просто блок за блоком випадає в кадр. */
-const StepsList: React.FC = () => {
+   КОЖЕН крок (01 / 02 / 03 / 04) має власний IntersectionObserver і
+   з'являється як єдиний блок (текст + фото синхронно: opacity + slide-up)
+   САМЕ В ТОЙ МОМЕНТ, коли користувач до нього доскролив. Не зліва-направо,
+   не зверху-вниз — кожен рядок як одне ціле. */
+const StepRow: React.FC<{ step: typeof STEPS[number]; index: number }> = ({ step, index }) => {
   const [ref, inView] = useInViewOnce<HTMLDivElement>({
-    threshold: 0.15,
-    rootMargin: "0px 0px -8% 0px",
+    threshold: 0.25,
+    rootMargin: "0px 0px -10% 0px",
   });
   return (
     <div
       ref={ref}
-      className={`${styles.stepsList} ${inView ? styles.stepsListIn : ""}`}
-      data-testid="cultures-steps"
+      className={`${styles.stepRow} ${inView ? styles.stepRowIn : ""}`}
+      data-testid={`cultures-step-${index + 1}`}
     >
-      {STEPS.map((s) => (
-        <div className={styles.stepRow} key={s.n}>
-          <div className={styles.stepText}>
-            <h3 className={styles.stepTitle}>{s.n}</h3>
-            <p className={styles.stepDesc}>{s.d}</p>
-          </div>
-          <img
-            decoding="async"
-            className={styles.stepImg}
-            src={s.img}
-            alt={s.n}
-            loading="lazy"
-          />
-        </div>
+      <div className={styles.stepText}>
+        <h3 className={styles.stepTitle}>{step.n}</h3>
+        <p className={styles.stepDesc}>{step.d}</p>
+      </div>
+      <img
+        decoding="async"
+        className={styles.stepImg}
+        src={step.img}
+        alt={step.n}
+        loading="lazy"
+      />
+    </div>
+  );
+};
+
+const StepsList: React.FC = () => {
+  return (
+    <div className={styles.stepsList} data-testid="cultures-steps">
+      {STEPS.map((s, i) => (
+        <StepRow key={s.n} step={s} index={i} />
       ))}
     </div>
   );

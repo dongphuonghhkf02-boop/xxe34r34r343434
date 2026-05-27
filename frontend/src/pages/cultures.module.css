@@ -1242,22 +1242,15 @@
   padding: 0 0 0 4px;
   /* Initial state — invisible, slightly pushed down. */
   opacity: 0;
-  transform: translateY(40px);
+  transform: translateY(48px);
   will-change: transform, opacity;
-  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
-              transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: opacity 0.85s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-/* When `.stepsList--in` додається на батьківський контейнер, кожен
-   .stepRow появляється послідовно як суцільний блок — fade-in + slide-up.
-   Stagger 220ms між сусідніми блоками. Не зліва-направо, не зверху-вниз —
-   КОЖЕН рядок як єдине ціле. */
-.stepsListIn .stepRow { opacity: 1; transform: translateY(0); }
-.stepsListIn .stepRow:nth-child(1) { transition-delay: 0ms; }
-.stepsListIn .stepRow:nth-child(2) { transition-delay: 220ms; }
-.stepsListIn .stepRow:nth-child(3) { transition-delay: 440ms; }
-.stepsListIn .stepRow:nth-child(4) { transition-delay: 660ms; }
-.stepsListIn .stepRow:nth-child(5) { transition-delay: 880ms; }
-.stepsListIn .stepRow:nth-child(6) { transition-delay: 1100ms; }
+/* Кожен .stepRow має власний IntersectionObserver; коли крок входить
+   у viewport — додаємо .stepRowIn і він з'являється як ЦІЛИЙ блок
+   (текст і фото синхронно). Не зліва-направо — як одне ціле. */
+.stepRowIn { opacity: 1; transform: translateY(0); }
 @media (prefers-reduced-motion: reduce) {
   .stepRow {
     opacity: 1 !important;
