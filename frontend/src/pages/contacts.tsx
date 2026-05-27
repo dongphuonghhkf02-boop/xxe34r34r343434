@@ -26,9 +26,9 @@ const FAQ_FALLBACK: FaqItem[] = [
 ];
 
 const IconClockWhite: React.FC = () => (
-  <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-    <circle cx="30" cy="30" r="22.5" stroke="#f9f7f2" strokeWidth="2"/>
-    <path d="M30 17.5v12.5l8 5" stroke="#f9f7f2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
+    <path d="M3.33 20C3.33 10.795 10.795 3.33 20 3.33C29.205 3.33 36.67 10.795 36.67 20C36.67 29.205 29.205 36.67 20 36.67C10.795 36.67 3.33 29.205 3.33 20Z" stroke="#F9F7F2" strokeWidth="1.67" strokeLinecap="square"/>
+    <path d="M20 10.83V20L25 25" stroke="#F9F7F2" strokeWidth="1.67" strokeLinecap="square"/>
   </svg>
 );
 const IconCallSmall: React.FC = () => (
