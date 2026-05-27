@@ -43,21 +43,22 @@
 .breadcrumb {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   font-family: "Golos Text", sans-serif;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 400;
-  line-height: 100%;
+  line-height: 120%;
   color: #93928c;
+  letter-spacing: -0.1px;
 }
 .breadcrumbLink {
   color: #93928c;
   text-decoration: none;
   transition: color .15s ease;
 }
-.breadcrumbLink:hover { color: #2c2c27; }
-.breadcrumbSep     { color: #93928c; }
-.breadcrumbCurrent { color: #2c2c27; }
+.breadcrumbLink:hover { color: #1b4332; }
+.breadcrumbSep     { color: #c9c7c0; font-weight: 300; }
+.breadcrumbCurrent { color: #2c2c27; font-weight: 500; }
 
 /* ---------- Headline (breadcrumb + 80px gap = top ~258px) ---------- */
 .catalogHeadline {
@@ -797,8 +798,8 @@
 
   /* Breadcrumb */
   .breadcrumb {
-    font-size: 12px;
-    gap: 6px;
+    font-size: 14px;
+    gap: 8px;
   }
 
   /* Headline becomes single column, left-aligned */

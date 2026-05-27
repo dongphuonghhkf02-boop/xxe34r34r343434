@@ -64,19 +64,21 @@
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   color: var(--text-cream, #F9F7F2);
   font-family: "Commissioner", system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 100%;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: -0.1px;
 }
 .breadcrumbLink {
   color: var(--text-cream, #F9F7F2);
-  opacity: 0.85;
+  opacity: 0.7;
   text-decoration: none;
+  transition: opacity 0.15s ease;
 }
 .breadcrumbLink:hover { opacity: 1; }
-.breadcrumbCurrent { color: var(--text-cream, #F9F7F2); }
+.breadcrumbCurrent { color: var(--text-cream, #F9F7F2); font-weight: 500; }
 .heroHeadline {
   position: absolute;
   top: 297px;            /* верхній відступ */
@@ -1556,7 +1558,8 @@
   .breadcrumb {
     top: 16px;
     left: 20px;
-    font-size: 12px;
+    font-size: 14px;
+    gap: 8px;
   }
   .heroHeadline {
     top: auto;

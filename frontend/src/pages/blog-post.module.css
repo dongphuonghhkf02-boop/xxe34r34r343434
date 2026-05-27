@@ -35,20 +35,22 @@
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-family: "Golos Text", sans-serif;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 400;
-  line-height: 100%;
+  line-height: 120%;
   color: #93928c;
   flex-wrap: wrap;
+  letter-spacing: -0.1px;
 }
 .bcLink {
   color: #93928c;
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 .bcLink:hover { color: #1b4332; }
-.bcSep { color: #93928c; }
+.bcSep { color: #c9c7c0; font-weight: 300; }
 .bcCurrent {
   color: #2c2c27;
   font-weight: 500;
@@ -422,7 +424,7 @@
   .ctaTitle { font-size: 22px; }
   .ctaActions { width: 100%; }
   .ctaPrimary, .ctaSecondary { flex: 1 1 auto; text-align: center; }
-  .breadcrumb { font-size: 13px; }
+  .breadcrumb { font-size: 15px; gap: 8px; }
   .bcCurrent { max-width: 22ch; }
   .content { font-size: 16px; line-height: 1.65; }
   .content h1 { font-size: 26px; }

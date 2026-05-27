@@ -55,16 +55,17 @@
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-family: "Golos Text", sans-serif;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 400;
   color: #93928c;
-  line-height: 100%;
+  line-height: 120%;
+  letter-spacing: -0.1px;
 }
 .breadcrumb a { color: #93928c; text-decoration: none; transition: color 0.15s ease; }
 .breadcrumb a:hover { color: #1b4332; }
-.breadcrumb .breadcrumbSep { color: #93928c; user-select: none; }
+.breadcrumb .breadcrumbSep { color: #c9c7c0; user-select: none; font-weight: 300; }
 .breadcrumb .current { color: #2c2c27; font-weight: 500; }
 
 .parent {
@@ -579,8 +580,8 @@
   }
 
   .breadcrumb {
-    font-size: 12px;
-    gap: 6px;
+    font-size: 14px;
+    gap: 8px;
   }
 
   .parent {

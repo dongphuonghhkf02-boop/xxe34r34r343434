@@ -39,11 +39,13 @@
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 10px;
+  font-family: "Golos Text", sans-serif;
+  font-size: 20px;
   font-weight: 400;
-  line-height: 100%;
+  line-height: 120%;
   color: #93928c;
+  letter-spacing: -0.1px;
 }
 .breadcrumbLink {
   color: #93928c;
@@ -54,8 +56,9 @@
   color: #1b4332;
 }
 .breadcrumbSep {
-  color: #93928c;
+  color: #c9c7c0;
   user-select: none;
+  font-weight: 300;
 }
 .breadcrumbCurrent {
   color: #2c2c27;
