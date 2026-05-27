@@ -430,7 +430,13 @@ const Cultures: React.FC = () => {
   // === Scroll-lock slider — wheel inside the calc section paginates slides.
   //     Supports both VERTICAL (mouse wheel / vertical trackpad gesture) and
   //     HORIZONTAL (trackpad two-finger left/right swipe) — whichever axis
-  //     dominates the wheel event is the one we use to drive pagination. ===
+  //     dominates the wheel event is the one we use to drive pagination.
+  //
+  //     Activation logic (важливо!): як тільки користувач починає СКРОЛИТИ
+  //     і секція займає більшу частину viewport (її центр у viewport-і ИЛИ
+  //     заголовок проскролений до верху), wheel перехоплюється на пагінацію.
+  //     На краях слайдера (перший / останній) колесо «звільняється» —
+  //     користувач може скролити сторінку далі. ===
   useEffect(() => {
     const section = calcSectionRef.current;
     if (!section) return;
@@ -438,7 +444,10 @@ const Cultures: React.FC = () => {
     let lock = false;     // throttle between slide changes
     let unlockTimer: number | null = null;
     let hAccum = 0;       // accumulated horizontal delta for swipe gestures
+    let vAccum = 0;       // accumulated vertical delta — для дрібних подій тачпада
+    let vDecayTimer: number | null = null;
     const H_THRESHOLD = 60;  // px of horizontal swipe required to flip a slide
+    const V_THRESHOLD = 40;  // px of vertical scroll required to flip a slide
 
     const flip = (direction: 1 | -1) => {
       const cur = activeSlideRef.current;
@@ -455,8 +464,19 @@ const Cultures: React.FC = () => {
     const onWheel = (e: WheelEvent) => {
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight || document.documentElement.clientHeight;
-      const isFullyVisible = rect.top <= 8 && rect.bottom >= vh - 8;
-      if (!isFullyVisible) return;
+      // Section is "active" коли її центр у межах viewport (більш гнучко за
+      // попередній strict-fullyVisible — працює на будь-яких висотах екрану,
+      // включно з ноутами 13"-14" та великими 4K моніторами).
+      const sectionCenter = rect.top + rect.height / 2;
+      const isActive =
+        rect.top <= vh * 0.25 &&  // верх секції вище 25% viewport
+        rect.bottom >= vh * 0.5 && // низ секції нижче середини
+        sectionCenter > 0 && sectionCenter < vh + rect.height; // sanity
+      if (!isActive) {
+        vAccum = 0;
+        hAccum = 0;
+        return;
+      }
 
       const cur = activeSlideRef.current;
       const last = COMPARE_SLIDES.length - 1;
@@ -470,14 +490,11 @@ const Cultures: React.FC = () => {
         // is enough to flip exactly one slide.
         if (lock) { e.preventDefault(); return; }
         hAccum += e.deltaX;
-        // Boundary release — let page handle horizontal scroll otherwise
         if (Math.abs(hAccum) < H_THRESHOLD) {
           e.preventDefault();
           return;
         }
         const direction: 1 | -1 = hAccum > 0 ? 1 : -1;
-        // Edge release: at first slide swiping right-to-left (back) or at
-        // last slide swiping forward — don't trap user inside the section.
         if ((direction < 0 && cur === 0) || (direction > 0 && cur === last)) {
           hAccum = 0;
           return;
@@ -488,19 +505,34 @@ const Cultures: React.FC = () => {
         return;
       }
 
-      // Vertical wheel / vertical trackpad path
-      const direction = e.deltaY > 0 ? 1 : -1;
-      if (direction < 0 && cur === 0) return; // let page scroll up
-      if (direction > 0 && cur === last) return; // let page scroll down
+      // Vertical wheel / vertical trackpad path.
+      // Тачпад віддає дуже дрібні deltaY (~3–10px) — акумулюємо, щоб
+      // навіть м'який скрол гарантовано перегортав слайди.
+      const dirCheck = e.deltaY > 0 ? 1 : -1;
+      // Boundary release — НЕ блокуємо скрол на краях слайдера, щоб
+      // користувач не «застрягав» у секції.
+      if (dirCheck < 0 && cur === 0) { vAccum = 0; return; }
+      if (dirCheck > 0 && cur === last) { vAccum = 0; return; }
+
       e.preventDefault();
       if (lock) return;
-      flip(direction as 1 | -1);
+
+      vAccum += e.deltaY;
+      // decay акумулятора, якщо користувач "відпустив" жест
+      if (vDecayTimer) window.clearTimeout(vDecayTimer);
+      vDecayTimer = window.setTimeout(() => { vAccum = 0; }, 220);
+
+      if (Math.abs(vAccum) < V_THRESHOLD) return;
+      const direction: 1 | -1 = vAccum > 0 ? 1 : -1;
+      vAccum = 0;
+      flip(direction);
     };
 
     section.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       section.removeEventListener("wheel", onWheel as any);
       if (unlockTimer) window.clearTimeout(unlockTimer);
+      if (vDecayTimer) window.clearTimeout(vDecayTimer);
     };
   }, []);
 
