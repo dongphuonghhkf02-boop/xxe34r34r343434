@@ -7,6 +7,7 @@ import LogisticsSection from "../components/figma/logistics-section";
 import TrustSection from "../components/welcome/frame-component10";
 import AnimatedNumber from "../components/about/animated-number";
 import RevealHeading from "../components/welcome/reveal-heading";
+import { useSwipeable } from "../lib/use-swipeable";
 import cardStyles from "../components/welcome/number-card1.module.css";
 import styles from "./about.module.css";
 
@@ -218,6 +219,14 @@ const About: React.FC = () => {
     setActivePeriodIdx((i) => (i - 1 + periodsCount) % periodsCount);
   const goNextPeriod = () =>
     setActivePeriodIdx((i) => (i + 1) % periodsCount);
+
+  // Swipe / drag для блоку історії — пальцем по картці або
+  // тачпадом горизонтально. Працює і на desktop, і на mobile.
+  const historySwipeRef = useSwipeable<HTMLDivElement>({
+    onNext: goNextPeriod,
+    onPrev: goPrevPeriod,
+    threshold: 50,
+  });
 
   // -------------------------------------------------------------------
   // Step-based slot-machine counter (перенесено 1:1 з Welcome /
@@ -748,12 +757,17 @@ const About: React.FC = () => {
             />
           </div>
 
-          <div className={styles.historyCard}>
+          <div
+            className={styles.historyCard}
+            ref={historySwipeRef}
+            style={{ touchAction: "pan-y", userSelect: "none" }}
+          >
             <img loading="lazy" decoding="async"
               key={activePeriod.id}
               className={styles.historyCardImage}
               src={activePeriod.img}
               alt={activePeriod.title}
+              draggable={false}
             />
             <div className={styles.historyCardText}>
               <h3 className={styles.historyCardTitle}>{activePeriod.title}</h3>

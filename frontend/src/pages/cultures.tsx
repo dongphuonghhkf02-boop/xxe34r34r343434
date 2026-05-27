@@ -13,6 +13,7 @@ import {
   type InsideMeta,
 } from "../lib/inside-api";
 import { useInViewOnce } from "../lib/use-in-view-once";
+import { useSwipeable } from "../lib/use-swipeable";
 
 /* =====================================================================
    /cultures — Cultures (Культури) page.
@@ -404,6 +405,22 @@ const Cultures: React.FC = () => {
   const toggleCulture = (id: string) =>
     setOpenCultureId((prev) => (prev === id ? "" : id));
 
+  // === Touch / pointer swipe for the calc slider («Порахуйте вигоду»).
+  //     Wheel-driven горизонтальний свайп тачпада вже обробляється у
+  //     useEffect нижче (onWheel на section), тому тут вмикаємо лише
+  //     pointer drag (миша / палець / тачпад натиснув-потягнув). ===
+  const calcSliderSwipeRef = useSwipeable<HTMLDivElement>({
+    onNext: () => {
+      const last = COMPARE_SLIDES.length - 1;
+      setActiveSlide((cur) => Math.min(last, cur + 1));
+    },
+    onPrev: () => {
+      setActiveSlide((cur) => Math.max(0, cur - 1));
+    },
+    threshold: 50,
+    enableWheel: false,
+  });
+
   // === Scroll-lock slider — wheel inside the calc section paginates slides.
   //     Supports both VERTICAL (mouse wheel / vertical trackpad gesture) and
   //     HORIZONTAL (trackpad two-finger left/right swipe) — whichever axis
@@ -687,7 +704,12 @@ const Cultures: React.FC = () => {
         </div>
 
         {/* ----- BOTTOM : slider 1920×939 ----- */}
-        <div className={styles.calcSlider} data-testid="cultures-slider">
+        <div
+          className={styles.calcSlider}
+          data-testid="cultures-slider"
+          ref={calcSliderSwipeRef}
+          style={{ touchAction: "pan-y", userSelect: "none" }}
+        >
           {/* Slides stack — each slide absolute-positioned, animated via opacity */}
           {COMPARE_SLIDES.map((slide, idx) => {
             const isActive = idx === activeSlide;

@@ -5,6 +5,7 @@ import PrimaryButton1 from "./primary-button1";
 import RevealHeading from "./reveal-heading";
 import TiltCard from "./tilt-card";
 import { useParallax } from "../../lib/use-parallax";
+import { useSwipeable } from "../../lib/use-swipeable";
 import { useCart } from "../../context/CartContext";
 import { listProducts, pickProductCover, type Product as ApiProduct } from "../../lib/products-api";
 import styles from "./frame-component11.module.css";
@@ -112,6 +113,14 @@ const FrameComponent11: React.FC<FrameComponent11Type> = ({
   const canPrev = page > 0;
   const canNext = page < TOTAL_PAGES - 1;
   const translateX = -page * PAGE_STRIDE;
+
+  // Swipe / drag — пальцем, мишею або тачпадом горизонтально.
+  const carouselSwipeRef = useSwipeable<HTMLDivElement>({
+    onNext: () => setPage((p) => Math.min(TOTAL_PAGES - 1, p + 1)),
+    onPrev: () => setPage((p) => Math.max(0, p - 1)),
+    threshold: 60,
+    enabled: () => TOTAL_PAGES > 1,
+  });
 
   const { addItem, openCart } = useCart();
 
@@ -225,7 +234,11 @@ const FrameComponent11: React.FC<FrameComponent11Type> = ({
               </button>
 
               {/* Cards viewport */}
-              <div className={styles.cardsViewport}>
+              <div
+                className={styles.cardsViewport}
+                ref={carouselSwipeRef}
+                style={{ touchAction: "pan-y", userSelect: "none" }}
+              >
                 <div
                   className={styles.cardsGroup}
                   style={{ transform: `translate3d(${translateX}px,0,0)` }}

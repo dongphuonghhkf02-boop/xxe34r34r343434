@@ -4,6 +4,7 @@ import {
   listReviewsPublic,
   type ReviewItem,
 } from "../../lib/reviews-api";
+import { useSwipeable } from "../../lib/use-swipeable";
 import styles from "./review-area1.module.css";
 
 /* =====================================================================
@@ -58,6 +59,16 @@ const ReviewArea1: React.FC<ReviewArea1Type> = ({ className = "" }) => {
   const handlePrev = () => { if (canPrev) setActive((a) => a - 1); };
   const handleNext = () => { if (canNext) setActive((a) => a + 1); };
 
+  // Swipe / drag support — пальцем, мишею і горизонтальним
+  // двопальцевим жестом тачпада. Стрілки + точки нижче лишаються
+  // для зворотної сумісності.
+  const stageSwipeRef = useSwipeable<HTMLDivElement>({
+    onNext: handleNext,
+    onPrev: handlePrev,
+    threshold: 50,
+    enabled: () => total > 1,
+  });
+
   // Pre-compute the visual role of each card (active / prev / next / hidden)
   const roleOf = (i: number): "active" | "prev" | "next" | "hidden" => {
     const d = i - active;
@@ -101,7 +112,12 @@ const ReviewArea1: React.FC<ReviewArea1Type> = ({ className = "" }) => {
               alt=""
               src="/image4@2x.webp"
             />
-            <div className={styles.stage} data-testid="reviews-stage">
+            <div
+              className={styles.stage}
+              data-testid="reviews-stage"
+              ref={stageSwipeRef}
+              style={{ touchAction: "pan-y", userSelect: "none" }}
+            >
               {reviews.map((review, i) => {
                 const role = roleOf(i);
                 return (
